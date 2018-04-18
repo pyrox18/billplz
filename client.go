@@ -61,6 +61,18 @@ func (c *Client) ActivateCollection(id string) error {
 	return nil
 }
 
+func (c *Client) CreateBill(b *Bill) (Bill, error) {
+	return Bill{}, nil
+}
+
+func (c *Client) GetBill(id string) (Bill, error) {
+	return Bill{}, nil
+}
+
+func (c *Client) DeleteBill(id string) error {
+	return nil
+}
+
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.baseURL.ResolveReference(rel)
