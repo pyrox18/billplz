@@ -1,9 +1,5 @@
 package billplz
 
-import (
-	"net/url"
-)
-
 type Collection struct {
 	ID           string        `json:"id,omitempty"`
 	Title        string        `json:"title,omitempty"`
@@ -13,8 +9,8 @@ type Collection struct {
 }
 
 type Logo struct {
-	ThumbURL  *url.URL `json:"thumb_url,omitempty"`
-	AvatarURL *url.URL `json:"avatar_url,omitempty"`
+	ThumbURL  string `json:"thumb_url,omitempty"`
+	AvatarURL string `json:"avatar_url,omitempty"`
 }
 
 type SplitPayment struct {
