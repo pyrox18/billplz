@@ -73,6 +73,10 @@ func (c *Client) DeleteBill(id string) error {
 	return nil
 }
 
+func (c *Client) GetBillTransactions(id string) (BillTransactions, error) {
+	return BillTransactions{}, nil
+}
+
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.baseURL.ResolveReference(rel)
