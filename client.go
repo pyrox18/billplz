@@ -15,6 +15,33 @@ type Client struct {
 	APIKey string
 }
 
+func (c *Client) CreateCollection(title string) (Collection, error) {
+	return Collection{}, nil
+}
+
+func (c *Client) GetCollection(id string) (Collection, error) {
+	return Collection{}, nil
+}
+
+func (c *Client) GetCollectionIndex(page int, status string) ([]Collection, error) {
+	if page == 0 {
+		page = 1
+	}
+	if status != "active" && status != "inactive" {
+		status = ""
+	}
+
+	return []Collection{}, nil
+}
+
+func (c *Client) DeactivateCollection(id string) error {
+	return nil
+}
+
+func (c *Client) ActivateCollection(id string) error {
+	return nil
+}
+
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.baseURL.ResolveReference(rel)
