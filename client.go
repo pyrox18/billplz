@@ -34,6 +34,25 @@ func (c *Client) GetCollectionIndex(page int, status string) ([]Collection, erro
 	return []Collection{}, nil
 }
 
+func (c *Client) CreateOpenCollection(o *OpenCollection) (OpenCollection, error) {
+	return OpenCollection{}, nil
+}
+
+func (c *Client) GetOpenCollection(id string) (OpenCollection, error) {
+	return OpenCollection{}, nil
+}
+
+func (c *Client) GetOpenCollectionIndex(page int, status string) ([]OpenCollection, error) {
+	if page == 0 {
+		page = 1
+	}
+	if status != "active" && status != "inactive" {
+		status = ""
+	}
+
+	return []OpenCollection{}, nil
+}
+
 func (c *Client) DeactivateCollection(id string) error {
 	return nil
 }
