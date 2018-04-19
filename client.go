@@ -141,6 +141,7 @@ func (c *Client) newRequest(method, path string, body interface{}) (*http.Reques
 		req.Header.Set("Content-Type", "application/json")
 	}
 	req.Header.Set("Accept", "application/json")
+	req.SetBasicAuth(c.APIKey, "")
 	return req, nil
 }
 
