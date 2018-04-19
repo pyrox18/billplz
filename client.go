@@ -172,24 +172,73 @@ func (c *Client) ActivateCollection(id string) error {
 	return nil
 }
 
-func (c *Client) CreateBill(b *Bill) (Bill, error) {
-	return Bill{}, nil
+func (c *Client) CreateBill(b Bill) (*Bill, error) {
+	err := b.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/bills", b)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Bill
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
-func (c *Client) GetBill(id string) (Bill, error) {
-	return Bill{}, nil
+func (c *Client) GetBill(id string) (*Bill, error) {
+	req, err := c.newRequest(http.MethodGet, "/bills/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Bill
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) DeleteBill(id string) error {
-	return nil
+	req, err := c.newRequest(http.MethodDelete, "/bills/"+id, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, &struct{}{})
+	if res.StatusCode == 404 {
+		return ErrBillNotFound
+	}
+	return err
 }
 
 func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
 	return true, nil
 }
 
-func (c *Client) GetBillTransactions(id string) (BillTransactions, error) {
-	return BillTransactions{}, nil
+func (c *Client) GetBillTransactions(id string, page int, status string) (*BillTransactions, error) {
+	if page <= 0 {
+		page = 1
+	}
+	if status != "pending" && status != "completed" && status != "failed" {
+		status = ""
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/bills/"+id+"/transactions", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result BillTransactions
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetPaymentMethodIndex(id string) ([]PaymentMethod, error) {
