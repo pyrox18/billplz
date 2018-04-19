@@ -91,8 +91,23 @@ func (c *Client) GetCollectionIndex(page int, status string) (*CollectionIndexRe
 	return &result, err
 }
 
-func (c *Client) CreateOpenCollection(o *OpenCollection) (OpenCollection, error) {
-	return OpenCollection{}, nil
+func (c *Client) CreateOpenCollection(o OpenCollection) (*OpenCollection, error) {
+	if o.SplitPayment == nil {
+		o.SplitPayment = &SplitPayment{}
+	}
+	err := o.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/open_collections", o)
+	if err != nil {
+		return nil, err
+	}
+
+	var result OpenCollection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetOpenCollection(id string) (OpenCollection, error) {
