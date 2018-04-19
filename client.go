@@ -160,6 +160,15 @@ func (c *Client) DeactivateCollection(id string) error {
 }
 
 func (c *Client) ActivateCollection(id string) error {
+	req, err := c.newRequest(http.MethodPost, "/collections/"+id+"/activate", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, struct{}{})
+	if res.StatusCode == http.StatusUnprocessableEntity {
+		return ErrCannotActivateCollection
+	}
 	return nil
 }
 
