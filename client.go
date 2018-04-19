@@ -226,10 +226,10 @@ func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
 
 	switch result.Name {
 	case "verified":
-	return true, nil
+		return true, nil
 	case "unverified":
 		return false, nil
-}
+	}
 	return false, ErrBankAccountNotFound
 }
 
@@ -270,8 +270,19 @@ func (c *Client) GetBankAccountIndex(accountNumbers []string) ([]BankAccount, er
 	return []BankAccount{}, nil
 }
 
-func (c *Client) GetBankAccount(accountNumber string) (BankAccount, error) {
-	return BankAccount{}, nil
+func (c *Client) GetBankAccount(accountNumber string) (*BankAccount, error) {
+	req, err := c.newRequest(http.MethodGet, "/bank_verification_services/"+accountNumber, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result BankAccount
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+
+	return &result, err
 }
 
 func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
