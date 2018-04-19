@@ -73,6 +73,10 @@ func (c *Client) DeleteBill(id string) error {
 	return nil
 }
 
+func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
+	return true, nil
+}
+
 func (c *Client) GetBillTransactions(id string) (BillTransactions, error) {
 	return BillTransactions{}, nil
 }
