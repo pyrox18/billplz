@@ -1,6 +1,8 @@
 package billplz
 
 import (
+	"encoding/json"
+
 	"github.com/go-ozzo/ozzo-validation"
 	"github.com/go-ozzo/ozzo-validation/is"
 )
@@ -19,6 +21,11 @@ func (c *Collection) Validate() error {
 		"split_payment": c.SplitPayment.Validate(),
 	}.Filter()
 	return err
+}
+
+type CollectionIndexResult struct {
+	Collections *[]Collection `json:"collections,omitempty"`
+	Page        json.Number   `json:"page,omitempty"`
 }
 
 type OpenCollection struct {
