@@ -200,7 +200,16 @@ func (c *Client) GetBill(id string) (*Bill, error) {
 }
 
 func (c *Client) DeleteBill(id string) error {
-	return nil
+	req, err := c.newRequest(http.MethodDelete, "/bills/"+id, nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, &struct{}{})
+	if res.StatusCode == 404 {
+		return ErrBillNotFound
+	}
+	return err
 }
 
 func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
