@@ -172,8 +172,20 @@ func (c *Client) ActivateCollection(id string) error {
 	return nil
 }
 
-func (c *Client) CreateBill(b *Bill) (Bill, error) {
-	return Bill{}, nil
+func (c *Client) CreateBill(b Bill) (*Bill, error) {
+	err := b.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/bills", b)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Bill
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetBill(id string) (Bill, error) {
