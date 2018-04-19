@@ -46,6 +46,19 @@ type OpenCollection struct {
 	Status          string        `json:"status,omitempty"`
 }
 
+func (o *OpenCollection) Validate() error {
+	err := validation.Errors{
+		"title":             validation.Validate(o.Title, validation.Required, validation.Length(1, 50)),
+		"description":       validation.Validate(o.Description, validation.Required, validation.Length(1, 200)),
+		"reference_1_label": validation.Validate(o.Reference1Label, validation.Length(0, 20)),
+		"reference_2_label": validation.Validate(o.Reference2Label, validation.Length(0, 20)),
+		"email_link":        validation.Validate(o.EmailLink, is.Email),
+		"payment_button":    validation.Validate(o.PaymentButton, validation.In("buy", "pay")),
+		"split_payment":     o.SplitPayment.Validate(),
+	}.Filter()
+	return err
+}
+
 type Logo struct {
 	ThumbURL  string `json:"thumb_url,omitempty"`
 	AvatarURL string `json:"avatar_url,omitempty"`
