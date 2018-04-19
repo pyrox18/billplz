@@ -188,8 +188,15 @@ func (c *Client) CreateBill(b Bill) (*Bill, error) {
 	return &result, err
 }
 
-func (c *Client) GetBill(id string) (Bill, error) {
-	return Bill{}, nil
+func (c *Client) GetBill(id string) (*Bill, error) {
+	req, err := c.newRequest(http.MethodGet, "/bills/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Bill
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) DeleteBill(id string) error {
