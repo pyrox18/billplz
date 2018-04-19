@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type Client struct {
@@ -58,15 +59,29 @@ func (c *Client) GetCollection(id string) (Collection, error) {
 	return Collection{}, nil
 }
 
-func (c *Client) GetCollectionIndex(page int, status string) ([]Collection, error) {
-	if page == 0 {
+func (c *Client) GetCollectionIndex(page int, status string) (*CollectionIndexResult, error) {
+	if page <= 0 {
 		page = 1
 	}
 	if status != "active" && status != "inactive" {
 		status = ""
 	}
 
-	return []Collection{}, nil
+	req, err := c.newRequest(http.MethodGet, "/collections", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result CollectionIndexResult
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) CreateOpenCollection(o *OpenCollection) (OpenCollection, error) {
