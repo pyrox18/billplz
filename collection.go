@@ -59,6 +59,11 @@ func (o *OpenCollection) Validate() error {
 	return err
 }
 
+type OpenCollectionIndexResult struct {
+	OpenCollections *[]OpenCollection `json:"open_collections,omitempty"`
+	Page            json.Number       `json:"page,omitempty"`
+}
+
 type Logo struct {
 	ThumbURL  string `json:"thumb_url,omitempty"`
 	AvatarURL string `json:"avatar_url,omitempty"`
