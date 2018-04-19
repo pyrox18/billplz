@@ -15,6 +15,26 @@ type Client struct {
 	APIKey string
 }
 
+func NewClient(httpClient *http.Client, apiKey string, sandbox bool) (*Client, error) {
+	if httpClient == nil {
+		httpClient = http.DefaultClient
+	}
+
+	c := &Client{
+		httpClient: httpClient,
+		APIKey:     apiKey,
+	}
+
+	var err error
+	if sandbox {
+		c.baseURL, err = url.Parse(endpointStaging)
+	} else {
+		c.baseURL, err = url.Parse(endpointProdV3)
+	}
+
+	return c, err
+}
+
 func (c *Client) CreateCollection(title string) (Collection, error) {
 	return Collection{}, nil
 }
