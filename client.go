@@ -110,8 +110,15 @@ func (c *Client) CreateOpenCollection(o OpenCollection) (*OpenCollection, error)
 	return &result, err
 }
 
-func (c *Client) GetOpenCollection(id string) (OpenCollection, error) {
-	return OpenCollection{}, nil
+func (c *Client) GetOpenCollection(id string) (*OpenCollection, error) {
+	req, err := c.newRequest(http.MethodGet, "/open_collections/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result OpenCollection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetOpenCollectionIndex(page int, status string) ([]OpenCollection, error) {
