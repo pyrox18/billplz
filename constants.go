@@ -21,3 +21,8 @@ const (
 	BankCodeStandardCharteredBank = "SCBLMYKX"
 	BankCodeUnitedOverseasBank    = "UOVBMYKL"
 )
+
+const (
+	endpointStaging = "https://billplz-staging.herokuapp.com"
+	endpointProdV3  = "https://www.billplz.com/api/v3"
+)
