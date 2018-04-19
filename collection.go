@@ -1,11 +1,24 @@
 package billplz
 
+import (
+	"github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
+
 type Collection struct {
 	ID           string        `json:"id,omitempty"`
 	Title        string        `json:"title,omitempty"`
 	Logo         *Logo         `json:"logo,omitempty"`
 	SplitPayment *SplitPayment `json:"split_payment,omitempty"`
 	Status       string        `json:"status,omitempty"`
+}
+
+func (c Collection) Validate() error {
+	err := validation.Errors{
+		"title": validation.Validate(c.Title, validation.Required),
+		"split_payment.email": validation.Validate(c.SplitPayment.Email, is.Email)
+	}.Filter()
+	return err
 }
 
 type OpenCollection struct {
