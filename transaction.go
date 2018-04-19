@@ -1,5 +1,7 @@
 package billplz
 
+import "encoding/json"
+
 type Transaction struct {
 	ID             string `json:"id,omitempty"`
 	Status         string `json:"status,omitempty"`
@@ -10,5 +12,5 @@ type Transaction struct {
 type BillTransactions struct {
 	BillID       string         `json:"bill_id,omitempty"`
 	Transactions *[]Transaction `json:"transactions,omitempty"`
-	Page         uint           `json:"page,omitempty"`
+	Page         json.Number    `json:"page,omitempty"`
 }
