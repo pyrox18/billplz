@@ -55,8 +55,15 @@ func (c *Client) CreateCollection(collection Collection) (*Collection, error) {
 	return &result, err
 }
 
-func (c *Client) GetCollection(id string) (Collection, error) {
-	return Collection{}, nil
+func (c *Client) GetCollection(id string) (*Collection, error) {
+	req, err := c.newRequest(http.MethodGet, "/collections/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Collection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetCollectionIndex(page int, status string) (*CollectionIndexResult, error) {
