@@ -3,13 +3,13 @@
 
 [[projects]]
   name = "github.com/go-ozzo/ozzo-validation"
-  packages = ["."]
+  packages = [".", "is"]
   revision = "85dcd8368eba387e65a03488b003e233994e87e9"
   version = "v3.3"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9b69a3eec5c66c6550ab2bcbde114d22c1ab1d570f286146ef75740351a884a8"
+  inputs-digest = "750aa32797249b99998edcaf78e969378fae2836740043af74e764a1cb2b8d92"
   solver-name = "gps-cdcl"
   solver-version = 1
