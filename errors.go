@@ -11,4 +11,5 @@ var (
 	ErrAdminPrivilegeRequired     = errors.New("billplz: admin privilege required")
 	ErrUnauthorized               = errors.New("billplz: invalid API authorization key")
 	ErrBillNotFound               = errors.New("billplz: bill not found")
+	ErrBankAccountNotFound        = errors.New("billplz: bank account not found")
 )
