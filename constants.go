@@ -23,6 +23,6 @@ const (
 )
 
 const (
-	endpointStaging = "https://billplz-staging.herokuapp.com"
+	endpointStaging = "https://billplz-staging.herokuapp.com/api/v3"
 	endpointProdV3  = "https://www.billplz.com/api/v3"
 )

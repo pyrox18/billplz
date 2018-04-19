@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strconv"
 )
 
 type Client struct {
@@ -35,15 +36,92 @@ func NewClient(httpClient *http.Client, apiKey string, sandbox bool) (*Client, e
 	return c, err
 }
 
-func (c *Client) CreateCollection(title string) (Collection, error) {
-	return Collection{}, nil
+func (c *Client) CreateCollection(collection Collection) (*Collection, error) {
+	if collection.SplitPayment == nil {
+		collection.SplitPayment = &SplitPayment{}
+	}
+	err := collection.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/collections", collection)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Collection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
-func (c *Client) GetCollection(id string) (Collection, error) {
-	return Collection{}, nil
+func (c *Client) GetCollection(id string) (*Collection, error) {
+	req, err := c.newRequest(http.MethodGet, "/collections/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Collection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
-func (c *Client) GetCollectionIndex(page int, status string) ([]Collection, error) {
+func (c *Client) GetCollectionIndex(page int, status string) (*CollectionIndexResult, error) {
+	if page <= 0 {
+		page = 1
+	}
+	if status != "active" && status != "inactive" {
+		status = ""
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/collections", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result CollectionIndexResult
+	_, err = c.do(req, &result)
+	return &result, err
+}
+
+func (c *Client) CreateOpenCollection(o OpenCollection) (*OpenCollection, error) {
+	if o.SplitPayment == nil {
+		o.SplitPayment = &SplitPayment{}
+	}
+	err := o.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/open_collections", o)
+	if err != nil {
+		return nil, err
+	}
+
+	var result OpenCollection
+	_, err = c.do(req, &result)
+	return &result, err
+}
+
+func (c *Client) GetOpenCollection(id string) (*OpenCollection, error) {
+	req, err := c.newRequest(http.MethodGet, "/open_collections/"+id, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result OpenCollection
+	_, err = c.do(req, &result)
+	return &result, err
+}
+
+func (c *Client) GetOpenCollectionIndex(page int, status string) (*OpenCollectionIndexResult, error) {
 	if page == 0 {
 		page = 1
 	}
@@ -51,33 +129,46 @@ func (c *Client) GetCollectionIndex(page int, status string) ([]Collection, erro
 		status = ""
 	}
 
-	return []Collection{}, nil
-}
-
-func (c *Client) CreateOpenCollection(o *OpenCollection) (OpenCollection, error) {
-	return OpenCollection{}, nil
-}
-
-func (c *Client) GetOpenCollection(id string) (OpenCollection, error) {
-	return OpenCollection{}, nil
-}
-
-func (c *Client) GetOpenCollectionIndex(page int, status string) ([]OpenCollection, error) {
-	if page == 0 {
-		page = 1
-	}
-	if status != "active" && status != "inactive" {
-		status = ""
+	req, err := c.newRequest(http.MethodGet, "/open_collections", nil)
+	if err != nil {
+		return nil, err
 	}
 
-	return []OpenCollection{}, nil
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result OpenCollectionIndexResult
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) DeactivateCollection(id string) error {
+	req, err := c.newRequest(http.MethodPost, "/collections/"+id+"/deactivate", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, struct{}{})
+	if res.StatusCode == http.StatusUnprocessableEntity {
+		return ErrCannotDeactivateCollection
+	}
 	return nil
 }
 
 func (c *Client) ActivateCollection(id string) error {
+	req, err := c.newRequest(http.MethodPost, "/collections/"+id+"/activate", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, struct{}{})
+	if res.StatusCode == http.StatusUnprocessableEntity {
+		return ErrCannotActivateCollection
+	}
 	return nil
 }
 
@@ -122,8 +213,8 @@ func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
-	rel := &url.URL{Path: path}
-	u := c.baseURL.ResolveReference(rel)
+	u := c.baseURL
+	u.Path = u.Path + path
 
 	var buf io.ReadWriter
 	if body != nil {
