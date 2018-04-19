@@ -85,6 +85,18 @@ func (c *Client) UpdatePaymentMethods(m *[]PaymentMethod) ([]PaymentMethod, erro
 	return []PaymentMethod{}, nil
 }
 
+func (c *Client) GetBankAccountIndex(accountNumbers []string) ([]BankAccount, error) {
+	return []BankAccount{}, nil
+}
+
+func (c *Client) GetBankAccount(accountNumber string) (BankAccount, error) {
+	return BankAccount{}, nil
+}
+
+func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
+	return BankAccount{}, nil
+}
+
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
 	rel := &url.URL{Path: path}
 	u := c.baseURL.ResolveReference(rel)
