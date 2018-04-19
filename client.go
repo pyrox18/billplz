@@ -213,7 +213,24 @@ func (c *Client) DeleteBill(id string) error {
 }
 
 func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
+	req, err := c.newRequest(http.MethodDelete, "/check/bank_account_number/"+accountNumber, nil)
+	if err != nil {
+		return false, err
+	}
+
+	var result BankAccountCheckResponse
+	_, err = c.do(req, &result)
+	if err != nil {
+		return false, err
+	}
+
+	switch result.Name {
+	case "verified":
 	return true, nil
+	case "unverified":
+		return false, nil
+}
+	return false, ErrBankAccountNotFound
 }
 
 func (c *Client) GetBillTransactions(id string, page int, status string) (*BillTransactions, error) {
