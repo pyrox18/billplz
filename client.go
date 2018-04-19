@@ -216,8 +216,29 @@ func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
 	return true, nil
 }
 
-func (c *Client) GetBillTransactions(id string) (BillTransactions, error) {
-	return BillTransactions{}, nil
+func (c *Client) GetBillTransactions(id string, page int, status string) (*BillTransactions, error) {
+	if page <= 0 {
+		page = 1
+	}
+	if status != "pending" && status != "completed" && status != "failed" {
+		status = ""
+	}
+
+	req, err := c.newRequest(http.MethodGet, "/bills/"+id+"/transactions", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result BillTransactions
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetPaymentMethodIndex(id string) ([]PaymentMethod, error) {
