@@ -35,8 +35,23 @@ func NewClient(httpClient *http.Client, apiKey string, sandbox bool) (*Client, e
 	return c, err
 }
 
-func (c *Client) CreateCollection(title string) (Collection, error) {
-	return Collection{}, nil
+func (c *Client) CreateCollection(collection Collection) (*Collection, error) {
+	if collection.SplitPayment == nil {
+		collection.SplitPayment = &SplitPayment{}
+	}
+	err := collection.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/collections", collection)
+	if err != nil {
+		return nil, err
+	}
+
+	var result Collection
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) GetCollection(id string) (Collection, error) {
