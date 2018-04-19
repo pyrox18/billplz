@@ -11,3 +11,7 @@ type BankAccount struct {
 	ProcessedAt       string `json:"processed_at,omitempty"`
 	RejectDescription string `json:"reject_desc,omitempty"`
 }
+
+type BankAccountCheckResponse struct {
+	Name string `json:"name,omitempty"`
+}
