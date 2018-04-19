@@ -121,7 +121,7 @@ func (c *Client) GetOpenCollection(id string) (*OpenCollection, error) {
 	return &result, err
 }
 
-func (c *Client) GetOpenCollectionIndex(page int, status string) ([]OpenCollection, error) {
+func (c *Client) GetOpenCollectionIndex(page int, status string) (*OpenCollectionIndexResult, error) {
 	if page == 0 {
 		page = 1
 	}
@@ -129,7 +129,21 @@ func (c *Client) GetOpenCollectionIndex(page int, status string) ([]OpenCollecti
 		status = ""
 	}
 
-	return []OpenCollection{}, nil
+	req, err := c.newRequest(http.MethodGet, "/open_collections", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	q.Set("page", strconv.Itoa(page))
+	if status != "" {
+		q.Set("status", status)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result OpenCollectionIndexResult
+	_, err = c.do(req, &result)
+	return &result, err
 }
 
 func (c *Client) DeactivateCollection(id string) error {
