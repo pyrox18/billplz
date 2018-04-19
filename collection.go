@@ -13,10 +13,10 @@ type Collection struct {
 	Status       string        `json:"status,omitempty"`
 }
 
-func (c Collection) Validate() error {
+func (c *Collection) Validate() error {
 	err := validation.Errors{
-		"title": validation.Validate(c.Title, validation.Required),
-		"split_payment.email": validation.Validate(c.SplitPayment.Email, is.Email)
+		"title":         validation.Validate(c.Title, validation.Required),
+		"split_payment": c.SplitPayment.Validate(),
 	}.Filter()
 	return err
 }
@@ -54,4 +54,11 @@ type SplitPayment struct {
 	FixedCut    uint   `json:"fixed_cut,omitempty"`
 	VariableCut uint   `json:"variable_cut,omitempty"`
 	SplitHeader bool   `json:"split_header,omitempty"`
+}
+
+func (s *SplitPayment) Validate() error {
+	err := validation.Errors{
+		"email": validation.Validate(s.Email, is.Email),
+	}.Filter()
+	return err
 }
