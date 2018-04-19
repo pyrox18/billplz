@@ -147,6 +147,15 @@ func (c *Client) GetOpenCollectionIndex(page int, status string) (*OpenCollectio
 }
 
 func (c *Client) DeactivateCollection(id string) error {
+	req, err := c.newRequest(http.MethodPost, "/collections/"+id+"/deactivate", nil)
+	if err != nil {
+		return err
+	}
+
+	res, err := c.do(req, struct{}{})
+	if res.StatusCode == http.StatusUnprocessableEntity {
+		return ErrCannotDeactivateCollection
+	}
 	return nil
 }
 
