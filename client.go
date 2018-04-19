@@ -122,8 +122,8 @@ func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
-	rel := &url.URL{Path: path}
-	u := c.baseURL.ResolveReference(rel)
+	u := c.baseURL
+	u.Path = u.Path + path
 
 	var buf io.ReadWriter
 	if body != nil {
