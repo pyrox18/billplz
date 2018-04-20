@@ -304,8 +304,23 @@ func (c *Client) GetBankAccount(accountNumber string) (*BankAccount, error) {
 	return &result, err
 }
 
-func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
-	return BankAccount{}, nil
+func (c *Client) CreateBankAccount(b BankAccount) (*BankAccount, error) {
+	err := b.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/bank_verification_services", b)
+	if err != nil {
+		return nil, err
+	}
+
+	var result BankAccount
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 || res.StatusCode == 401 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+	return &result, err
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
