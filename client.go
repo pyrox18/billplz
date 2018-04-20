@@ -62,7 +62,10 @@ func (c *Client) GetCollection(id string) (*Collection, error) {
 	}
 
 	var result Collection
-	_, err = c.do(req, &result)
+	res, err := c.do(req, &result)
+	if res.StatusCode == 404 {
+		return nil, ErrCollectionNotFound
+	}
 	return &result, err
 }
 
@@ -117,7 +120,10 @@ func (c *Client) GetOpenCollection(id string) (*OpenCollection, error) {
 	}
 
 	var result OpenCollection
-	_, err = c.do(req, &result)
+	res, err := c.do(req, &result)
+	if res.StatusCode == 404 {
+		return nil, ErrCollectionNotFound
+	}
 	return &result, err
 }
 
