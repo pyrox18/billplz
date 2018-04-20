@@ -266,8 +266,27 @@ func (c *Client) UpdatePaymentMethods(m *[]PaymentMethod) ([]PaymentMethod, erro
 	return []PaymentMethod{}, nil
 }
 
-func (c *Client) GetBankAccountIndex(accountNumbers []string) ([]BankAccount, error) {
-	return []BankAccount{}, nil
+func (c *Client) GetBankAccountIndex(accountNumbers []string) (*BankAccountList, error) {
+	req, err := c.newRequest(http.MethodGet, "/bank_verification_services", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	for index, element := range accountNumbers {
+		if index > 9 {
+			break
+		}
+		q.Add("account_numbers[]", element)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result BankAccountList
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 || res.StatusCode == 401 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+	return &result, err
 }
 
 func (c *Client) GetBankAccount(accountNumber string) (*BankAccount, error) {
