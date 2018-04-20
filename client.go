@@ -201,7 +201,10 @@ func (c *Client) GetBill(id string) (*Bill, error) {
 	}
 
 	var result Bill
-	_, err = c.do(req, &result)
+	res, err := c.do(req, &result)
+	if res.StatusCode == 404 {
+		return nil, ErrBillNotFound
+	}
 	return &result, err
 }
 
