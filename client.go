@@ -213,7 +213,24 @@ func (c *Client) DeleteBill(id string) error {
 }
 
 func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
-	return true, nil
+	req, err := c.newRequest(http.MethodDelete, "/check/bank_account_number/"+accountNumber, nil)
+	if err != nil {
+		return false, err
+	}
+
+	var result BankAccountCheckResponse
+	_, err = c.do(req, &result)
+	if err != nil {
+		return false, err
+	}
+
+	switch result.Name {
+	case "verified":
+		return true, nil
+	case "unverified":
+		return false, nil
+	}
+	return false, ErrBankAccountNotFound
 }
 
 func (c *Client) GetBillTransactions(id string, page int, status string) (*BillTransactions, error) {
@@ -249,16 +266,61 @@ func (c *Client) UpdatePaymentMethods(m *[]PaymentMethod) ([]PaymentMethod, erro
 	return []PaymentMethod{}, nil
 }
 
-func (c *Client) GetBankAccountIndex(accountNumbers []string) ([]BankAccount, error) {
-	return []BankAccount{}, nil
+func (c *Client) GetBankAccountIndex(accountNumbers []string) (*BankAccountList, error) {
+	req, err := c.newRequest(http.MethodGet, "/bank_verification_services", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var q = req.URL.Query()
+	for index, element := range accountNumbers {
+		if index > 9 {
+			break
+		}
+		q.Add("account_numbers[]", element)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	var result BankAccountList
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 || res.StatusCode == 401 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+	return &result, err
 }
 
-func (c *Client) GetBankAccount(accountNumber string) (BankAccount, error) {
-	return BankAccount{}, nil
+func (c *Client) GetBankAccount(accountNumber string) (*BankAccount, error) {
+	req, err := c.newRequest(http.MethodGet, "/bank_verification_services/"+accountNumber, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result BankAccount
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+
+	return &result, err
 }
 
-func (c *Client) CreateBankAccount(b *BankAccount) (BankAccount, error) {
-	return BankAccount{}, nil
+func (c *Client) CreateBankAccount(b BankAccount) (*BankAccount, error) {
+	err := b.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := c.newRequest(http.MethodPost, "/bank_verification_services", b)
+	if err != nil {
+		return nil, err
+	}
+
+	var result BankAccount
+	res, err := c.do(req, &result)
+	if res.StatusCode == 422 || res.StatusCode == 401 {
+		return nil, ErrAdminPrivilegeRequired
+	}
+	return &result, err
 }
 
 func (c *Client) newRequest(method, path string, body interface{}) (*http.Request, error) {
