@@ -1,5 +1,8 @@
 package billplz
 
+// Bank SWIFT codes supported by the Billplz API.
+//
+// Extracted from https://www.billplz.com/api#create-a-bank-account.
 const (
 	BankCodeAffinBank             = "PHBMMYKL"
 	BankCodeAgrobank              = "BPMBMYKL"
@@ -22,6 +25,7 @@ const (
 	BankCodeUnitedOverseasBank    = "UOVBMYKL"
 )
 
+// Base URLs for Billplz API endpoints supported by the package.
 const (
 	endpointStaging = "https://billplz-staging.herokuapp.com/api/v3"
 	endpointProdV3  = "https://www.billplz.com/api/v3"
