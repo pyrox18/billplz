@@ -258,12 +258,37 @@ func (c *Client) GetBillTransactions(id string, page int, status string) (*BillT
 	return &result, err
 }
 
-func (c *Client) GetPaymentMethodIndex(id string) ([]PaymentMethod, error) {
-	return []PaymentMethod{}, nil
+func (c *Client) GetPaymentMethodIndex(id string) (*[]PaymentMethod, error) {
+	req, err := c.newRequest(http.MethodGet, "/collections/"+id+"/payment_methods", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PaymentMethodList
+	_, err = c.do(req, &result)
+	return result.PaymentMethods, err
 }
 
-func (c *Client) UpdatePaymentMethods(m *[]PaymentMethod) ([]PaymentMethod, error) {
-	return []PaymentMethod{}, nil
+func (c *Client) UpdatePaymentMethods(id string, codes []string) (*[]PaymentMethod, error) {
+	methods := []PaymentMethod{}
+	for _, element := range codes {
+		methods = append(methods, PaymentMethod{
+			Code: element,
+		})
+	}
+
+	body := PaymentMethodList{
+		PaymentMethods: &methods,
+	}
+
+	req, err := c.newRequest(http.MethodPut, "/collections/"+id+"/payment_methods", body)
+	if err != nil {
+		return nil, err
+	}
+
+	var result PaymentMethodList
+	_, err = c.do(req, &result)
+	return result.PaymentMethods, err
 }
 
 func (c *Client) GetBankAccountIndex(accountNumbers []string) (*BankAccountList, error) {
