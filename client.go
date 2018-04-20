@@ -264,8 +264,9 @@ func (c *Client) GetPaymentMethodIndex(id string) (*[]PaymentMethod, error) {
 		return nil, err
 	}
 
-	var result struct {
-		Methods *[]PaymentMethod `json:"payment_methods,omitempty"`
+	var result PaymentMethodList
+	_, err = c.do(req, &result)
+	return result.PaymentMethods, err
 	}
 	_, err = c.do(req, &result)
 	return result.Methods, err
