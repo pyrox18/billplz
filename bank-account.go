@@ -15,3 +15,7 @@ type BankAccount struct {
 type BankAccountCheckResponse struct {
 	Name string `json:"name,omitempty"`
 }
+
+type BankAccountList struct {
+	BankAccounts *[]BankAccount `json:"bank_verification_services,omitempty"`
+}
