@@ -258,8 +258,17 @@ func (c *Client) GetBillTransactions(id string, page int, status string) (*BillT
 	return &result, err
 }
 
-func (c *Client) GetPaymentMethodIndex(id string) ([]PaymentMethod, error) {
-	return []PaymentMethod{}, nil
+func (c *Client) GetPaymentMethodIndex(id string) (*[]PaymentMethod, error) {
+	req, err := c.newRequest(http.MethodGet, "/collections/"+id+"/payment_methods", nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var result struct {
+		Methods *[]PaymentMethod `json:"payment_methods,omitempty"`
+	}
+	_, err = c.do(req, &result)
+	return result.Methods, err
 }
 
 func (c *Client) UpdatePaymentMethods(m *[]PaymentMethod) ([]PaymentMethod, error) {
