@@ -7,6 +7,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// Collection represents a set that contains many bills.
 type Collection struct {
 	ID           string        `json:"id,omitempty"`
 	Title        string        `json:"title,omitempty"`
@@ -15,6 +16,7 @@ type Collection struct {
 	Status       string        `json:"status,omitempty"`
 }
 
+// Validate validates a collection's details for submission with Client.CreateCollection.
 func (c *Collection) Validate() error {
 	err := validation.Errors{
 		"title":         validation.Validate(c.Title, validation.Required),
@@ -23,11 +25,13 @@ func (c *Collection) Validate() error {
 	return err
 }
 
+// CollectionIndexResult represents the structure of the response body obtained with Client.GetCollectionIndex.
 type CollectionIndexResult struct {
 	Collections *[]Collection `json:"collections,omitempty"`
 	Page        json.Number   `json:"page,omitempty"`
 }
 
+// OpenCollection represents a one-off payment form.
 type OpenCollection struct {
 	ID              string        `json:"id,omitempty"`
 	Title           string        `json:"title,omitempty"`
@@ -46,6 +50,7 @@ type OpenCollection struct {
 	Status          string        `json:"status,omitempty"`
 }
 
+// Validate validates an open collection's details for submission with Client.CreateOpenCollection.
 func (o *OpenCollection) Validate() error {
 	err := validation.Errors{
 		"title":             validation.Validate(o.Title, validation.Required, validation.Length(1, 50)),
@@ -59,21 +64,26 @@ func (o *OpenCollection) Validate() error {
 	return err
 }
 
+// OpenCollectionIndexResult represents the structure of the response body obtained with
+// Client.GetOpenCollectionIndex.
 type OpenCollectionIndexResult struct {
 	OpenCollections *[]OpenCollection `json:"open_collections,omitempty"`
 	Page            json.Number       `json:"page,omitempty"`
 }
 
+// Logo represents a set of URLs to logo images for a collection.
 type Logo struct {
 	ThumbURL  string `json:"thumb_url,omitempty"`
 	AvatarURL string `json:"avatar_url,omitempty"`
 }
 
+// Photo represents a set of URLs to images for an open collection.
 type Photo struct {
 	RetinaURL string `json:"retina_url,omitempty"`
 	AvatarURL string `json:"avatar_url,omitempty"`
 }
 
+// SplitPayment represents data for a split payment made in collections or open collections.
 type SplitPayment struct {
 	Email       string `json:"email,omitempty"`
 	FixedCut    uint   `json:"fixed_cut,omitempty"`
@@ -81,6 +91,7 @@ type SplitPayment struct {
 	SplitHeader bool   `json:"split_header,omitempty"`
 }
 
+// Validate validates a split payment's details for submission.
 func (s *SplitPayment) Validate() error {
 	err := validation.Errors{
 		"email": validation.Validate(s.Email, is.Email),
