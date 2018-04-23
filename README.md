@@ -1,4 +1,4 @@
-# billplz-go
+# pyrox18/billplz
 
 A Go wrapper for the [Billplz REST API](https://www.billplz.com/api).
 
