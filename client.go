@@ -50,7 +50,7 @@ func (c *Client) CreateCollection(collection Collection) (*Collection, error) {
 	if collection.SplitPayment == nil {
 		collection.SplitPayment = &SplitPayment{}
 	}
-	err := collection.Validate()
+	err := collection.validate()
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (c *Client) CreateOpenCollection(o OpenCollection) (*OpenCollection, error)
 	if o.SplitPayment == nil {
 		o.SplitPayment = &SplitPayment{}
 	}
-	err := o.Validate()
+	err := o.validate()
 	if err != nil {
 		return nil, err
 	}
@@ -223,7 +223,7 @@ func (c *Client) ActivateCollection(id string) error {
 // An error will be returned if the supplied bill fails validation,
 // or if the HTTP request fails.
 func (c *Client) CreateBill(b Bill) (*Bill, error) {
-	err := b.Validate()
+	err := b.validate()
 	if err != nil {
 		return nil, err
 	}
@@ -423,7 +423,7 @@ func (c *Client) GetBankAccount(accountNumber string) (*BankAccount, error) {
 // An error will also be returned if the supplied bank account fails validation,
 // or if the HTTP request fails.
 func (c *Client) CreateBankAccount(b BankAccount) (*BankAccount, error) {
-	err := b.Validate()
+	err := b.validate()
 	if err != nil {
 		return nil, err
 	}

@@ -17,8 +17,7 @@ type BankAccount struct {
 	RejectDescription string `json:"reject_desc,omitempty"`
 }
 
-// Validate validates a bank account's details for submission with Client.CreateBankAccount.
-func (b *BankAccount) Validate() error {
+func (b *BankAccount) validate() error {
 	err := validation.Errors{
 		"name":   validation.Validate(b.Name, validation.Required),
 		"id_no":  validation.Validate(b.IDNumber, validation.Required),

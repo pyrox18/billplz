@@ -30,8 +30,7 @@ type Bill struct {
 	Description     string `json:"description,omitempty"`
 }
 
-// Validate validates a bill's details for submission with Client.CreateBill.
-func (b *Bill) Validate() error {
+func (b *Bill) validate() error {
 	err := validation.Errors{
 		"collection_id":     validation.Validate(b.CollectionID, validation.Required),
 		"email":             validation.Validate(b.Email, is.Email),

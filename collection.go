@@ -16,11 +16,10 @@ type Collection struct {
 	Status       string        `json:"status,omitempty"`
 }
 
-// Validate validates a collection's details for submission with Client.CreateCollection.
-func (c *Collection) Validate() error {
+func (c *Collection) validate() error {
 	err := validation.Errors{
 		"title":         validation.Validate(c.Title, validation.Required),
-		"split_payment": c.SplitPayment.Validate(),
+		"split_payment": c.SplitPayment.validate(),
 	}.Filter()
 	return err
 }
@@ -50,8 +49,7 @@ type OpenCollection struct {
 	Status          string        `json:"status,omitempty"`
 }
 
-// Validate validates an open collection's details for submission with Client.CreateOpenCollection.
-func (o *OpenCollection) Validate() error {
+func (o *OpenCollection) validate() error {
 	err := validation.Errors{
 		"title":             validation.Validate(o.Title, validation.Required, validation.Length(1, 50)),
 		"description":       validation.Validate(o.Description, validation.Required, validation.Length(1, 200)),
@@ -59,7 +57,7 @@ func (o *OpenCollection) Validate() error {
 		"reference_2_label": validation.Validate(o.Reference2Label, validation.Length(0, 20)),
 		"email_link":        validation.Validate(o.EmailLink, is.Email),
 		"payment_button":    validation.Validate(o.PaymentButton, validation.In("buy", "pay")),
-		"split_payment":     o.SplitPayment.Validate(),
+		"split_payment":     o.SplitPayment.validate(),
 	}.Filter()
 	return err
 }
@@ -91,8 +89,7 @@ type SplitPayment struct {
 	SplitHeader bool   `json:"split_header,omitempty"`
 }
 
-// Validate validates a split payment's details for submission.
-func (s *SplitPayment) Validate() error {
+func (s *SplitPayment) validate() error {
 	err := validation.Errors{
 		"email": validation.Validate(s.Email, is.Email),
 	}.Filter()
