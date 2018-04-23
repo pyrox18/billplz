@@ -1,3 +1,4 @@
+// Package billplz provides wrapper types and functions for interacting with the Billplz REST API.
 package billplz
 
 import (
