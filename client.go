@@ -222,7 +222,7 @@ func (c *Client) DeleteBill(id string) error {
 }
 
 func (c *Client) CheckRegistration(accountNumber string) (bool, error) {
-	req, err := c.newRequest(http.MethodDelete, "/check/bank_account_number/"+accountNumber, nil)
+	req, err := c.newRequest(http.MethodGet, "/check/bank_account_number/"+accountNumber, nil)
 	if err != nil {
 		return false, err
 	}
