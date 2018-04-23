@@ -7,6 +7,7 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
+// Bill represents a bill contained within a collection.
 type Bill struct {
 	ID              string `json:"id,omitempty"`
 	CollectionID    string `json:"collection_id,omitempty"`
@@ -29,7 +30,7 @@ type Bill struct {
 	Description     string `json:"description,omitempty"`
 }
 
-func (b *Bill) Validate() error {
+func (b *Bill) validate() error {
 	err := validation.Errors{
 		"collection_id":     validation.Validate(b.CollectionID, validation.Required),
 		"email":             validation.Validate(b.Email, is.Email),
